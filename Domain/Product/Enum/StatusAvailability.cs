@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Domain.Product.Enum
 {
-    public enum Availability
+    public enum StatusAvailability
     {
         Indisponível,
         Disponível

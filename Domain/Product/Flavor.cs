@@ -12,8 +12,14 @@ namespace Domain.Product
         public string Name { get; private set; } = string.Empty;
         public Availability Availability { get; private set; }
         public Price? Price { get; private set; }
+        
 
+        public Flavor (string name)
+        {
+            if (string.IsNullOrWhiteSpace(name)) 
+                throw new ArgumentException("Nome do sabor deve ser informado.");
 
-        public bool IsAvailable() => Availability == Availability.Disponível;
+        }
+       
     }
 }

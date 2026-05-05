@@ -13,6 +13,6 @@ namespace Domain.Product
         public Availability Availability { get; private set; }
         public Price Price { get; private set;  }
 
-        public bool IsAvailable() => Availability == Availability.Disponível;
+        
     }
 }

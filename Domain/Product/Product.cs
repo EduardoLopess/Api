@@ -12,7 +12,9 @@ namespace Domain.Product
         public int Id { get; private set; }
         public Price Price { get; private set; }
         public Category Category { get; private set; }
-        public int CodeNCM { get; private set;  }
+        public int? CodeNCM { get; private set;  }
+        public QuantityStock Stock { get; private set; }
+        public Availability Availability { get; private set; }
 
         private readonly List<Additional> _additional = [];
         public IReadOnlyCollection<Additional>? Additionals => _additional;
@@ -21,7 +23,7 @@ namespace Domain.Product
         public IReadOnlyCollection<Flavor>? Flavors => _flavor;
 
 
-        public Product(IEnumerable<Flavor>? flavors = null, IEnumerable<Additional>? additionals = null)
+        public Product(Availability availability, QuantityStock stock , IEnumerable<Flavor>? flavors = null, IEnumerable<Additional>? additionals = null)
         {
             if (flavors is not null)
             {
@@ -39,31 +41,90 @@ namespace Domain.Product
                 }
             }
 
+            Stock = stock;
+            Availability = availability;
+
         }
 
-
-
+    
         private void AddAdditional(Additional additional)
         {
-            if (additional is null) throw new ArgumentNullException(nameof(additional));
+            if (additional is null) 
+                throw new ArgumentNullException(nameof(additional), "Adicional não informado");
 
-            if (_additional.Contains(additional)) throw new InvalidOperationException("Adicional já cadastrado no produto.");
+            if (_additional.Any(a => a.Id == additional.Id)) 
+                throw new InvalidOperationException("Adicional já cadastrado no produto.");
 
-            if (!additional.IsAvailable()) throw new InvalidOperationException("Adicional indisponível.");
+            if (!additional.Availability.IsAvailable()) 
+                throw new InvalidOperationException("Adicional indisponível.");
 
             _additional.Add(additional);
         }
 
         private void AddFlavor(Flavor flavor)
         {
-            if (flavor is null) throw new ArgumentNullException(nameof(flavor));
+            if (flavor is null) 
+                throw new ArgumentNullException(nameof(flavor), "Sabo não informado");
 
-            if (_flavor.Contains(flavor)) throw new InvalidOperationException("Sabor já cadastrado no produto.");
+            if (_flavor.Any(f => f.Id == flavor.Id)) 
+                throw new InvalidOperationException("Sabor já cadastrado no produto.");
 
-            if (!flavor.IsAvailable()) throw new InvalidOperationException("Sabor indisponível");
+            if (!flavor.Availability.IsAvailable()) 
+                throw new InvalidOperationException("Sabor indisponível");
 
             _flavor.Add(flavor);
         }
+
+
+
+        public void AddStock(QuantityStock quantityToAdd)
+        {
+            if (quantityToAdd is null)
+                throw new ArgumentNullException(nameof(quantityToAdd), "Valor estoque não informado.");
+
+            Stock = Stock.AddStock(quantityToAdd);
+
+            if (Stock.HasIsStock() && !Availability.IsAvailable())
+            {
+                Available();
+            }
+        }
+
+        public void DebitStock(QuantityStock quantityToDebit)
+        {
+            if (quantityToDebit is null) 
+                throw new ArgumentNullException(nameof(quantityToDebit), "Valor a ser decrementado não informado.");
+
+            Stock = Stock.DebitStock(quantityToDebit);
+
+            if (Stock.StockIsEmpty() && Availability.IsAvailable())
+            {
+                Unavailable();
+            }
+
+        }
+
+        private void Unavailable ()
+        {
+            if (!Availability.IsAvailable()) 
+                throw new InvalidOperationException("Produto já indisponível");
+
+            Availability.Unavailable();
+        }
+
+        private void Available()
+        {
+            if (Availability.IsAvailable()) 
+                throw new InvalidOperationException("Produto já disponível.");
+
+           Availability.Available();
+        }
+
+
+
+
+
+
 
     }
 }
