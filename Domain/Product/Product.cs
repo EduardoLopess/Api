@@ -9,7 +9,7 @@ namespace Domain.Product
 {
     public  class Product
     {
-        public int Id { get; private set; }
+        public Guid Id { get; private set; }
         public string Name { get; private set; }
         public Price Price { get; private set; }
         public ProductCategory Category { get; private set; }
@@ -48,6 +48,7 @@ namespace Domain.Product
                 }
             }
 
+            Id = Guid.NewGuid();
             Name = name;
             Price = price;
             Stock = stock;
@@ -147,6 +148,12 @@ namespace Domain.Product
         {
             if (category is null)
                 throw new ArgumentNullException(nameof(category), "Categoria não informada.");
+
+            if (category.Type is null)
+                throw new ArgumentNullException("Tipo do produto não informado.");
+
+            if (category.SubType is null) 
+                throw new ArgumentNullException("Subtipo do produto não informado.");
         }
 
         private void EnsureValidPrice(Price price)

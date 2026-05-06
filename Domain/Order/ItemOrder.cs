@@ -6,42 +6,52 @@ namespace Domain.Order
 {
     public class ItemOrder
     {
-        public int Id { get; private set; }
+        public Guid Id { get; private set; }
         public int ProductId { get; private set; }
-        public int Quantitiy { get; private set; }
+        public int Quantity { get; private set; }
         public decimal UnitPrice { get; private set; }
         public decimal Discount { get; private set;  }
-        public decimal TotalItem => UnitPrice * Quantitiy;
+        public decimal TotalItem => UnitPrice * Quantity - Discount;
 
 
         protected ItemOrder () {}
 
-        public ItemOrder(int id, int productId, int quantitiy, decimal unitPrice)
+        public ItemOrder(int id, int productId, int quantity, decimal unitPrice)
         {
-            Id = id;
+            Id = Guid.NewGuid();
             ProductId = productId;
-            Quantitiy = quantitiy;
-            UnitPrice = unitPrice;
+            Quantity = quantity;
+            UnitPrice = unitPrice; 
             Discount = 0;
         }
 
-        public void IncrementQuantitiy()
+        public void IncrementQuantity()
         {
-            if (Quantitiy >= 99) 
+            if (Quantity >= 99) 
                 throw new InvalidOperationException("Quantidade máxima excedida.");
 
-            Quantitiy += 1;
+            Quantity += 1;
         }
 
         public void DecrementQuantity()
         {
-            if (Quantitiy <= 1) 
+            if (Quantity <= 1) 
                 throw new InvalidOperationException("Quantidade minima permitida é 1. ");
 
-            Quantitiy -= 1;
+            Quantity -= 1;
         }
 
-        public void ApplyDiscount ()
+        public void ApplyDiscountValue(decimal valueDiscont)
+        {
+            var subtotal = UnitPrice * Quantity;
+
+            if (valueDiscont <= 0 || valueDiscont >= subtotal)
+                throw new ArgumentException("Valor de desconto inválido.");
+
+            Discount = valueDiscont;
+        }
+
+        public void ApplyDiscountPercent(int valuePercent)
         {
 
         }
