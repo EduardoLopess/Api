@@ -10,8 +10,9 @@ namespace Domain.Product
     public  class Product
     {
         public int Id { get; private set; }
+        public string Name { get; private set; }
         public Price Price { get; private set; }
-        public Category Category { get; private set; }
+        public ProductCategory Category { get; private set; }
         public int? CodeNCM { get; private set;  }
         public QuantityStock Stock { get; private set; }
         public Availability Availability { get; private set; }
@@ -23,8 +24,14 @@ namespace Domain.Product
         public IReadOnlyCollection<Flavor>? Flavors => _flavor;
 
 
-        public Product(Availability availability, QuantityStock stock , IEnumerable<Flavor>? flavors = null, IEnumerable<Additional>? additionals = null)
+        public Product(string name, QuantityStock stock , ProductCategory category, Price price, IEnumerable<Flavor>? flavors = null, IEnumerable<Additional>? additionals = null)
         {
+
+            EnsureValidName(name);
+            EnsureValidStock(stock);
+            EnsureValidCategory(category);
+            EnsureValidPrice(price);
+
             if (flavors is not null)
             {
                 foreach (var item in flavors)
@@ -41,8 +48,11 @@ namespace Domain.Product
                 }
             }
 
+            Name = name;
+            Price = price;
             Stock = stock;
-            Availability = availability;
+            Availability.Available();
+            Category = category;
 
         }
 
@@ -121,10 +131,29 @@ namespace Domain.Product
         }
 
 
+        private void EnsureValidName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Nome é obrigatório.", nameof(name));
+        }
 
+        private void EnsureValidStock(QuantityStock stock)
+        {
+            if (stock is null)
+                throw new ArgumentNullException(nameof(stock), "Valor de estoque deve ser informado.");
+        }
 
+        private void EnsureValidCategory(ProductCategory category)
+        {
+            if (category is null)
+                throw new ArgumentNullException(nameof(category), "Categoria não informada.");
+        }
 
-
+        private void EnsureValidPrice(Price price)
+        {
+            if (price is null)
+                throw new ArgumentNullException(nameof(price), "Preço não informado.");
+        }
 
     }
 }

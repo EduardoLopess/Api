@@ -14,9 +14,19 @@ namespace Domain.Product
         public Price Price { get; private set;  }
         public QuantityStock Stock { get; private set; }
 
-        public Additional ()
+        public Additional (string name, Price price)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException("Nome deve ser informado.");
 
+            if (price is null) 
+                throw new ArgumentNullException("Preço deve ser informado."); 
+
+            Name = name;
+            Price = price;
+            Availability.Available();
+
+                
         }
 
         public void AddStock(QuantityStock quantityToAdd)

@@ -1,46 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Domain.Product
+﻿public class Category
 {
-    public class Category
+    public int Id { get; private set; }
+    public string Name { get; private set; } = string.Empty;
+
+    public int? ParentId { get; private set; }
+    public Category? Parent { get; private set; }
+
+    private readonly List<Category> _children = [];
+    public IReadOnlyCollection<Category> Children => _children;
+
+    protected Category() { }
+
+    public Category(string name, IEnumerable<Category>? children = null)
     {
-        public int Id { get; private set; }
-        public string Name { get; private set; } = string.Empty;
-        public int? ParentId { get; private set; }
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Nome da categoria não informado.", nameof(name));
 
-        public Category Parent { get; private set; }
+        Name = name;
 
-        private readonly List<Category> _children = [];
-        public IReadOnlyCollection<Category> Children => _children;
-
-
-        public Category (string name, IEnumerable<Category> children)
+        if (children is not null)
         {
-            if (children is null) throw new ArgumentNullException(nameof(children), "A lista de subcategorias não pode ser nula.");
-            if (string.IsNullOrWhiteSpace(name)) throw new ArgumentNullException(nameof(name));
-
-            Name = name;
-
             foreach (var item in children)
-            {
                 AddSubCategory(item);
-            }
-
         }
+    }
 
+    public void AddSubCategory(Category children)
+    {
+        if (children is null)
+            throw new ArgumentNullException(nameof(children), "Categoria filha não pode ser nula.");
 
+        if (children == this)
+            throw new ArgumentException("Categoria não pode ser filha dela mesma.", nameof(children));
 
-        public void AddSubCategory(Category children)
-        {
-            if (children is null) throw new ArgumentNullException(nameof(children), "Categoria filha não pode ser nula.");
+        children.Parent = this;
+        children.ParentId = Id;
 
-            if (children == this) throw new ArgumentNullException(nameof(children), "Categoria não pode ser filha dela mesma.");
-
-            _children.Add(children);
-        }
-
-      
+        _children.Add(children);
     }
 }

@@ -12,7 +12,7 @@ namespace Domain.Product.ValueObject
         {
 
             if (value < 0) 
-                throw new ArgumentException(nameof(value), "Estoque não pode ser negativo");
+                throw new ArgumentException("Estoque não pode ser negativo", nameof(value));
 
             Value = value;
         }
