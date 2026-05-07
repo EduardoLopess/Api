@@ -14,8 +14,16 @@ namespace Domain.Table
         public OrderId? OrderId { get; private set; }
         public StatusAccess StatusAccess { get; private set; }
 
-        public Table ()
+
+        protected Table () {}
+
+        public Table (int number)
         {
+            if (number <= 0) 
+                throw new ArgumentException("Número da mesa inválido.");
+
+
+            Number = number;
             Status = StatusTable.Livre;
             StatusAccess = StatusAccess.Unlocked();
         }

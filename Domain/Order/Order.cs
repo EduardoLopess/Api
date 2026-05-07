@@ -9,6 +9,7 @@ namespace Domain.Order
         public Guid Id { get; private set; }
         public int TableId { get; private set; }
         public DateTime DateCreate { get; private set; }
+        public DateTime DataCompletion { get; private set;  }
         public decimal TotalOrder => _orderItens.Sum(v => v.TotalItem);
 
         private readonly List<ItemOrder> _orderItens = [];
@@ -51,10 +52,8 @@ namespace Domain.Order
             if (itemId == Guid.Empty)
                 throw new ArgumentException("Id inválido.");
 
-            var itemRemove = _orderItens.Find(i => i.Id == itemId);
-
-            if (itemRemove is null)
-                throw new InvalidOperationException("Item não encontrado.");
+            var itemRemove = _orderItens.Find(i => i.Id == itemId) 
+                ?? throw new InvalidOperationException("Item não encontrado.");
 
             _orderItens.Remove(itemRemove);
 

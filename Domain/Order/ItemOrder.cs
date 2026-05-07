@@ -10,7 +10,7 @@ namespace Domain.Order
         public int ProductId { get; private set; }
         public int Quantity { get; private set; }
         public decimal UnitPrice { get; private set; }
-        public decimal Discount { get; private set;  }
+        public decimal Discount { get; private set; }
         public decimal TotalItem => UnitPrice * Quantity - Discount;
 
 

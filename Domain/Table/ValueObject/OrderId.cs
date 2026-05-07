@@ -7,6 +7,8 @@ namespace Domain.Table.ValueObject
     public record OrderId
     {
         public int Value { get; }
+        
+        protected OrderId() {}
 
         public OrderId (int value)
         {

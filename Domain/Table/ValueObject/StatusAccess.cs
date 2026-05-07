@@ -7,8 +7,11 @@ namespace Domain.Table.ValueObject
 {
     public class StatusAccess
     {
-        public UserId? UserId { get; }
-        public StatusLocked StatusLocked { get; }
+        public UserId? UserId { get; } //vo
+        public StatusLocked StatusLocked { get; } //enum
+
+
+        protected StatusAccess() {}
 
         public StatusAccess(UserId? userId, StatusLocked statusLocked)
         {
