@@ -2,6 +2,7 @@
 using Domain.Table;
 using Domain.Order;
 using Microsoft.EntityFrameworkCore;
+using Domain.Table.ValueObject;
 
 namespace Data
 {
@@ -15,22 +16,49 @@ namespace Data
         public DbSet<ItemOrder> Items { get; set; }
 
 
-      protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Table>(builder =>
             {
                 builder.ToTable("Mesas");
                 builder.HasKey(t => t.Id);
 
-                builder.Property(t => t.Number).HasColumnName("NumeroMesa").IsRequired();
+                builder.Property(t => t.Number)
+                    .HasColumnName("NumeroMesa").HasMaxLength(2)
+                    .IsRequired();
 
-                //builder.OwnsOne(l => l.LockedAcess, vo =>
-              //  {
-                    
-            //   // })
-          // })
+                builder.Property(t => t.Status)
+                    .HasConversion<int>();
+
+                builder.Property(t => t.OrderId)
+                    .HasConversion(
+                        i => i.Value,
+                        value => new OrderId(value)
+                    );
+
+                builder.OwnsOne(x => x.StatusAccess, sa =>
+                {
+                    sa.Property(x => x.UserId)
+                        .HasConversion(
+                            id => id.Value,
+                            value => new UserId(value)
+                        );
+
+                    sa.Property(x => x.StatusLocked)
+                        .HasConversion<int>();
+                });
+
+            });
+
+            modelBuilder.Entity<Product>(builder =>
+            {
 
 
-        }
+            });
+
+        
+
+        } 
     }
 }
