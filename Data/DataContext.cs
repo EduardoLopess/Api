@@ -3,6 +3,7 @@ using Domain.Table;
 using Domain.Order;
 using Microsoft.EntityFrameworkCore;
 using Domain.Table.ValueObject;
+using Domain.Product.ValueObject;
 
 namespace Data
 {
@@ -53,7 +54,39 @@ namespace Data
 
             modelBuilder.Entity<Product>(builder =>
             {
+                builder.ToTable("Produtos");
+                builder.HasKey(p => p.Id);
 
+                builder.Property(p => p.Name)
+                    .HasColumnName("NomeProduto")
+                    .HasColumnType("varchar(50)")
+                    .IsRequired();
+
+                builder.OwnsOne(p => p.Price, vo =>
+                {
+                    vo.Property(x => x.Value)
+                        .HasColumnName("Price")
+                        .HasPrecision(18, 2);
+                });
+
+
+
+            });
+
+
+            modelBuilder.Entity<Category>(builder =>
+            {
+                builder.ToTable("Categoria");
+                builder.HasKey(c => c.Id);
+
+                builder.Property(c => c.Name)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                builder.HasOne(c => c.Parent)
+                    .WithMany(c => c.Children)
+                    .HasForeignKey(c => c.ParentId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
             });
 
