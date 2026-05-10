@@ -1,4 +1,4 @@
-﻿using Domain.Product;
+using Domain.Product;
 using Domain.Table;
 using Domain.Order;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +13,7 @@ namespace Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Flavor> Flavors { get; set; }
         public DbSet<Additional> Additionals { get; set; }
-        public DbSet<Order> Orders { get; set;  }
+        public DbSet<Order> Orders { get; set; }
         public DbSet<ItemOrder> Items { get; set; }
 
 
@@ -64,10 +64,46 @@ namespace Data
 
                 builder.OwnsOne(p => p.Price, vo =>
                 {
-                    vo.Property(x => x.Value)
+                    vo.Property(p => p.Value)
                         .HasColumnName("Price")
                         .HasPrecision(18, 2);
                 });
+
+                builder.OwnsOne(p => p.Category, vo =>
+                {
+                    vo.Property(p => p.Category)
+                        .HasColumnName("Categoria")
+                        .IsRequired();
+
+                    vo.Property(p => p.Type)
+                        .HasColumnName("Tipo")
+                        .IsRequired();
+
+                    vo.Property(p => p.SubType)
+                        .HasColumnName("SubTipo")
+                        .IsRequired();
+                });
+
+                builder.OwnsOne(p => p.Availability, vo =>
+                {
+                    vo.Property(p => p.Value)
+                        .HasColumnName("Disponibilidade")
+                        .IsRequired();
+
+                });
+
+                builder.OwnsOne(p => p.Stock, vo =>
+                {
+                    vo.Property(p => p.Value)
+                        .HasColumnName("Estoque")
+                        .IsRequired();
+                });
+
+               
+
+
+                  
+                    
 
 
 
@@ -90,8 +126,8 @@ namespace Data
 
             });
 
-        
 
-        } 
+
+        }
     }
 }
