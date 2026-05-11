@@ -9,9 +9,9 @@ namespace Domain.Product.ValueObject
     {
         public StatusAvailability Value { get; private set; }
 
-        public Availability()
+        public Availability(StatusAvailability status)
         {
-            Value = StatusAvailability.Disponível;
+            Value = status;
         }
 
 
