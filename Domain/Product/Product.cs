@@ -18,10 +18,10 @@ namespace Domain.Product
         public Availability Availability { get; private set; }
 
         private readonly List<Additional> _additional = [];
-        public IReadOnlyCollection<Additional>? Additionals => _additional;
+        public IReadOnlyCollection<Additional> Additionals => _additional;
 
         private readonly List<Flavor> _flavor = [];
-        public IReadOnlyCollection<Flavor>? Flavors => _flavor;
+        public IReadOnlyCollection<Flavor> Flavors => _flavor;
 
 
         public Product(string name, QuantityStock stock , ProductCategory category, Price price, IEnumerable<Flavor>? flavors = null, IEnumerable<Additional>? additionals = null)

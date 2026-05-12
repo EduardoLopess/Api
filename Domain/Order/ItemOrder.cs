@@ -53,6 +53,8 @@ namespace Domain.Order
 
         public void ApplyDiscountPercent(int valuePercent)
         {
+            var subTotal = UnitPrice * Quantity;
+            var discountCalcule = subTotal * (valuePercent / 100);
 
         }
     }
