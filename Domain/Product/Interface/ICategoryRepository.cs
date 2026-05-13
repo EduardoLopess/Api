@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Domain.Order.Interface
+namespace Domain.Product.Interface
 {
-    public interface IItemOrderRepository : IBaseRepository<ItemOrder>
+    public interface ICategoryRepository : IBaseRepository<Category>
     {
     }
 }

@@ -22,7 +22,8 @@ namespace Domain.Product
 
         private readonly List<Flavor> _flavor = [];
         public IReadOnlyCollection<Flavor> Flavors => _flavor;
-
+        
+        protected Product() { }
 
         public Product(string name, QuantityStock stock , ProductCategory category, Price price, IEnumerable<Flavor>? flavors = null, IEnumerable<Additional>? additionals = null)
         {

@@ -21,7 +21,7 @@ namespace Data.Map
 
             builder.Property(p => p.Price).HasConversion(
                 price => price.Value,
-                value => new Price(value)).HasPrecision(18, 2);
+                value => new Price(value)).HasPrecision(18, 2).IsRequired();
 
             builder.OwnsOne(p => p.Category, vo =>
             {
@@ -39,7 +39,13 @@ namespace Data.Map
 
             });
 
-             builder.Property(p => p.Availability).HasConversion(
+            builder.Property(x => x.Stock)
+                   .HasConversion(
+                       stock => stock.Value,
+                       value => new QuantityStock(value)
+                   ).HasColumnName("QuantideEstoque").IsRequired();
+
+            builder.Property(p => p.Availability).HasConversion(
                 availability => availability.Value.ToString(),
                 value => new Availability((StatusAvailability)
                 Enum.Parse(typeof(StatusAvailability), 

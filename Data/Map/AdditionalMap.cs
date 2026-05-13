@@ -4,31 +4,29 @@ using Domain.Product.ValueObject;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Data.Map
 {
-    public class FlavorMap : IEntityTypeConfiguration<Flavor>
+    public class AdditionalMap : IEntityTypeConfiguration<Additional>
     {
-        public void Configure(EntityTypeBuilder<Flavor> builder)
+        public void Configure(EntityTypeBuilder<Additional> builder)
         {
-            builder.ToTable("Sabores");
+            builder.ToTable("Adicionais");
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Name)
-                .HasColumnName("Nome")
                 .HasColumnType("varchar(80)")
                 .IsRequired();
 
             builder.Property(x => x.Availability).HasConversion(
-                availability => availability.Value.ToString(),
-                value => new Availability((StatusAvailability)
-                Enum.Parse(typeof(StatusAvailability),
-                value)))
-                .HasColumnType("varchar")
-                .HasMaxLength(50);
+              availability => availability.Value.ToString(),
+              value => new Availability((StatusAvailability)
+              Enum.Parse(typeof(StatusAvailability),
+              value)))
+              .HasColumnType("varchar")
+              .HasMaxLength(50);
 
             builder.Property(x => x.Price)
                     .HasConversion(
@@ -42,9 +40,9 @@ namespace Data.Map
                     .HasConversion(
                         stock => stock.Value,
                         value => new QuantityStock(value)
-                    ).HasColumnName("QuantideEstoque").IsRequired() ;
+                    ).HasColumnName("QuantideEstoque").IsRequired();
         }
+
+
     }
 }
-
-

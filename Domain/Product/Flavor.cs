@@ -15,6 +15,8 @@ namespace Domain.Product
         public QuantityStock Stock { get; private set; }
 
 
+        protected Flavor() { }
+
         public Flavor(string name, Availability availability)
         {
             if (string.IsNullOrWhiteSpace(name)) 

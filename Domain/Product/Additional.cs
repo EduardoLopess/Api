@@ -11,17 +11,17 @@ namespace Domain.Product
         public int Id { get; private set; }
         public string Name { get; private set; }
         public Availability Availability { get; private set; }
-        public Price Price { get; private set;  }
+        public Price? Price { get; private set;  }
         public QuantityStock Stock { get; private set; }
 
-        public Additional (string name, Price price)
+        protected Additional() { }
+
+        public Additional (string name, Price? price)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("Nome deve ser informado.");
 
-            if (price is null) 
-                throw new ArgumentNullException("Preço deve ser informado."); 
-
+           
             Name = name;
             Price = price;
             Availability.Available();
