@@ -7,7 +7,7 @@ namespace Domain.Order
     public class Order
     {
         public Guid Id { get; private set; }
-        public int TableId { get; private set; }
+        public Guid TableId { get; private set; }
         public DateTime DateCreate { get; private set; }
         public DateTime DataCompletion { get; private set;  }
         public decimal TotalOrder => _orderItens.Sum(v => v.TotalItem);

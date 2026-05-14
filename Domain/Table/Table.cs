@@ -8,7 +8,7 @@ namespace Domain.Table
 {
     public class Table
     {
-        public int Id { get; private set; }
+        public Guid Id { get; private set; }
         public int Number { get; private set; }
         public StatusTable Status { get; private set; }
         public OrderId? OrderId { get; private set; }
@@ -22,7 +22,7 @@ namespace Domain.Table
             if (number <= 0) 
                 throw new ArgumentException("Número da mesa inválido.");
 
-
+            Id = Guid.NewGuid();
             Number = number;
             Status = StatusTable.Livre;
             StatusAccess = StatusAccess.Unlocked();

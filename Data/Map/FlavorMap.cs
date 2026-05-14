@@ -42,7 +42,7 @@ namespace Data.Map
                     .HasConversion(
                         stock => stock.Value,
                         value => new QuantityStock(value)
-                    ).HasColumnName("QuantideEstoque").IsRequired() ;
+                    ).HasColumnName("QuantidadeEstoque").IsRequired() ;
         }
     }
 }

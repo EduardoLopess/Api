@@ -7,7 +7,7 @@ namespace Domain.Order
     public class ItemOrder
     {
         public Guid Id { get; private set; }
-        public int ProductId { get; private set; }
+        public Guid ProductId { get; private set; }
         public int Quantity { get; private set; }
         public decimal UnitPrice { get; private set; }
         public decimal Discount { get; private set; }
@@ -16,7 +16,7 @@ namespace Domain.Order
 
         protected ItemOrder () {}
 
-        public ItemOrder(int id, int productId, int quantity, decimal unitPrice)
+        public ItemOrder(Guid productId, int quantity, decimal unitPrice)
         {
             Id = Guid.NewGuid();
             ProductId = productId;

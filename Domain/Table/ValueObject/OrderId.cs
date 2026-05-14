@@ -6,13 +6,13 @@ namespace Domain.Table.ValueObject
 {
     public record OrderId
     {
-        public int Value { get; }
+        public Guid Value { get; }
         
         protected OrderId() {}
 
-        public OrderId (int value)
+        public OrderId (Guid value)
         {
-            if (value <= 0)
+            if (value == Guid.Empty)
                 throw new ArgumentException("Id Inválido.");
 
          

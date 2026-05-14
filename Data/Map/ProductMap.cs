@@ -25,16 +25,16 @@ namespace Data.Map
 
             builder.OwnsOne(p => p.Category, vo =>
             {
-                vo.Property(p => p.Category)
-                    .HasColumnName("Categoria")
+                vo.Property(p => p.CategoryId)
+                    .HasColumnName("CategoriaId")
                     .IsRequired();
 
-                vo.Property(p => p.Type)
-                    .HasColumnName("Tipo")
+                vo.Property(p => p.TypeId)
+                    .HasColumnName("TipoId")
                     .IsRequired();
 
-                vo.Property(p => p.SubType)
-                    .HasColumnName("SubTipo")
+                vo.Property(p => p.SubTypeId)
+                    .HasColumnName("SubTipoId")
                     .IsRequired();
 
             });
@@ -43,7 +43,7 @@ namespace Data.Map
                    .HasConversion(
                        stock => stock.Value,
                        value => new QuantityStock(value)
-                   ).HasColumnName("QuantideEstoque").IsRequired();
+                   ).HasColumnName("QuantidadeEstoque").IsRequired();
 
             builder.Property(p => p.Availability).HasConversion(
                 availability => availability.Value.ToString(),

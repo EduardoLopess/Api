@@ -9,7 +9,7 @@ namespace Data.Map
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.ToTable("Order");
+            builder.ToTable("Pedido");
             builder.HasKey(o => o.Id);
 
             builder.Property(o => o.DateCreate)
@@ -30,11 +30,6 @@ namespace Data.Map
 
             builder.Navigation(o => o.OrderItens)
                  .UsePropertyAccessMode(PropertyAccessMode.Field);
-
-            builder.Property(o => o.TotalOrder)
-                .HasColumnName("TotalPedido")
-                .HasPrecision(18, 2)
-                .IsRequired();
 
         }
     }

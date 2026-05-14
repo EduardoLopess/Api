@@ -1,9 +1,9 @@
 ﻿public class Category
 {
-    public int Id { get; private set; }
+    public Guid Id { get; private set; }
     public string Name { get; private set; } = string.Empty;
 
-    public int? ParentId { get; private set; }
+    public Guid? ParentId { get; private set; }
     public Category? Parent { get; private set; }
 
     private readonly List<Category> _children = [];
@@ -17,6 +17,7 @@
             throw new ArgumentException("Nome da categoria não informado.", nameof(name));
 
         Name = name;
+        Id = Guid.NewGuid();
 
         if (children is not null)
         {
@@ -28,10 +29,10 @@
     public void AddSubCategory(Category children)
     {
         if (children is null)
-            throw new ArgumentNullException(nameof(children), "Categoria filha não pode ser nula.");
+            throw new ArgumentNullException(nameof(children));
 
         if (children == this)
-            throw new ArgumentException("Categoria não pode ser filha dela mesma.", nameof(children));
+            throw new ArgumentException("Categoria não pode ser filha dela mesma.");
 
         children.Parent = this;
         children.ParentId = Id;

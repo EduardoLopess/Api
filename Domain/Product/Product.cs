@@ -150,10 +150,10 @@ namespace Domain.Product
             if (category is null)
                 throw new ArgumentNullException(nameof(category), "Categoria não informada.");
 
-            if (category.Type is null)
+            if (category.TypeId == Guid.Empty)
                 throw new ArgumentNullException("Tipo do produto não informado.");
 
-            if (category.SubType is null) 
+            if (category.SubTypeId == Guid.Empty) 
                 throw new ArgumentNullException("Subtipo do produto não informado.");
         }
 
