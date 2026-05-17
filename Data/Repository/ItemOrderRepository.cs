@@ -18,7 +18,7 @@ namespace Data.Repository
             throw new NotImplementedException();
         }
 
-        public Task<ItemOrder?> GetByIdAsync(int entityId)
+        public Task<ItemOrder?> GetByIdAsync(Guid entityId)
         {
             throw new NotImplementedException();
         }
