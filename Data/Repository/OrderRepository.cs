@@ -18,12 +18,12 @@ namespace Data.Repository
             throw new NotImplementedException();
         }
 
-        public Task<Order?> GetByIdAsync(int entityId)
+        public Task<Order?> GetByIdAsync(Guid entityId)
         {
             throw new NotImplementedException();
         }
 
-        public bool HasAnyOrderWithProduct(int productId)
+        public bool HasAnyOrderWithProduct(Guid productId)
         {
             throw new NotImplementedException();
         }

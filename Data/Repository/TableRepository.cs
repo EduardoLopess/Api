@@ -12,12 +12,17 @@ namespace Data.Repository
             throw new NotImplementedException();
         }
 
+        public Task Delete(Table table)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<IList<Table>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<Table?> GetByIdAsync(int entityId)
+        public Task<Table?> GetByIdAsync(Guid entityId)
         {
             throw new NotImplementedException();
         }

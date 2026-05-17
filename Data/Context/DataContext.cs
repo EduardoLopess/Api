@@ -2,6 +2,7 @@ using Domain.Product;
 using Domain.Table;
 using Domain.Order;
 using Microsoft.EntityFrameworkCore;
+using Domain.Employee;
 
 
 namespace Data.Context
@@ -15,6 +16,7 @@ namespace Data.Context
         public DbSet<Order> Orders { get; set; }
         public DbSet<ItemOrder> Items { get; set; }
         public DbSet<Category> Categories {get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
 
 

@@ -3,11 +3,12 @@ namespace Domain.Table.ValueObject
 {
     public record UserId
     {
-        public int Value { get; }
+        public Guid Value { get; }
 
-        public UserId (int value)
+        public UserId (Guid value)
         {
-            if (value <= 0) throw new ArgumentException("Id inválido.");
+            if (value == Guid.Empty) 
+                throw new ArgumentException("Id inválido.");
 
             Value = value;
         }
