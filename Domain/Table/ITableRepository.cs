@@ -3,6 +3,6 @@
 
 namespace Domain.Table
 {
-    public interface ITableRepository : IBaseRepository<Table> { }
+    public interface ITableRepository : IBaseRepository<Table> { Task Delete(Table table); }
     
 }

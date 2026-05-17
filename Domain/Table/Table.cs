@@ -76,6 +76,12 @@ namespace Domain.Table
             StatusAccess = StatusAccess.Unlocked();
         }
 
+        public void TableIsLocked (UserId userId)
+        {
+            if (StatusAccess.StatusIsLocked() || !StatusAccess.IsSameUser(userId))
+                throw new InvalidOperationException("Mesa bloqueada e o úsuario não possui o bloqueio.");
+        }
+
 
         private void CreateOrderId (OrderId orderId)
         {
