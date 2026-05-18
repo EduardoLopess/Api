@@ -57,12 +57,23 @@ namespace Application.UseCase.EmployeeUseCase
             var emailVO = CreateVO(request.Email);
 
             var employee = await _employeeRepository.GetByEmailAsync(emailVO);
-           
+
+            if (!Guid.TryParse(request.Id, out var idGuid))
+                throw new InvalidOperationException("Falha na conversão do ID");
+
+            var employee = await _employeeRepository.GetByIdAsync(idGuid);
+
             if (employee is null)
                 throw new InvalidOperationException("Funcionário não encontrado.");
 
+            if (employee.Email != emailVO)
+                throw new InvalidOperationException("Email não confere");
+
+
             if (!_passwordService.VerifyPassword(request.Password, employee.PasswordHash))
                 throw new InvalidOperationException("Senha não confere.");
+
+
 
             var employeeToken = new TokenEmployee
             {
@@ -73,6 +84,8 @@ namespace Application.UseCase.EmployeeUseCase
             };
 
             var token = _tokenService.GenerateToken(employeeToken);
+
+
 
             var loginResponseDTO =  new LoginResponseDTO
             {
