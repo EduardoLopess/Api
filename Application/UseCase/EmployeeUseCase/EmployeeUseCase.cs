@@ -119,6 +119,11 @@ namespace Application.UseCase.EmployeeUseCase
 
             return Result<Guid>.Success(employee.Id, "Role de acesso atualizado com sucesso.");
         }
+
+        public async Task<Result<Guid>> DeleteEmployee ()
+        {
+
+        }
     }
 }
 

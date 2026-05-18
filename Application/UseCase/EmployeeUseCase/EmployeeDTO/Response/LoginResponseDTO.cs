@@ -4,12 +4,12 @@ using System.Text;
 
 namespace Application.UseCase.EmployeeUseCase.EmployeeDTO.Response
 {
-    public class LoginResponseDTO
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Role { get; set; }
-        public string Token { get; set; }
+    public record LoginResponseDTO
+    (
+         string Id,
+         string Name,
+         string Role,
+         string Token
 
-    }
+    );
 }
