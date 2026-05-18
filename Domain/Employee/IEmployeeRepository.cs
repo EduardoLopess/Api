@@ -9,6 +9,10 @@ namespace Domain.Employee
     public interface IEmployeeRepository : IBaseRepository<Employee>
     {
        Task<bool> EmailAlreadyRegistered(Email email);
-       Task GetByEmail(string email);
+        Task<Employee?> GetByEmailAsync(Email email);
+        
+
+    
+
     }
 }

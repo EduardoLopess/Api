@@ -44,9 +44,10 @@ namespace Data.Repository
                 .AnyAsync(e => e.Email.Value == email.Value);
         }
 
-        public Task GetByEmail(string email)
+        public async Task<Employee?> GetByEmailAsync(Email email)
         {
-            return await _context.Employees.
+            return await _context.Employees
+                .FirstOrDefaultAsync(x => x.Email.Value == email.Value);
         }
     }
 }

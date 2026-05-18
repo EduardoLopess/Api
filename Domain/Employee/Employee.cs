@@ -38,8 +38,10 @@ namespace Domain.Employee
             PasswordHash = newPasswordHash;
         }
 
-        public void ChangeRolerAcess (RoleAccess roleAccess)
+        public void ChangeRoleAccess(RoleAccess roleAccess)
         {
+            if (roleAccess == RoleAccess)
+                throw new InvalidOperationException("Funcionário já possui essa Role");
 
             EnsureValidRoleAcess(roleAccess);
 
