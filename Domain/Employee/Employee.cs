@@ -48,6 +48,12 @@ namespace Domain.Employee
             RoleAccess = roleAccess;
         }
 
+        public void UpdateEmail (string email)
+        {
+            Email = Email.Create(email);
+
+        }
+
         private void EnsureValidName (string name)
         {
             if (string.IsNullOrWhiteSpace(name))

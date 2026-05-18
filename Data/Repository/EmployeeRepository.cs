@@ -49,5 +49,11 @@ namespace Data.Repository
             return await _context.Employees
                 .FirstOrDefaultAsync(x => x.Email.Value == email.Value);
         }
+
+        public async Task DeleteAsync(Employee employee)
+        {
+            _context.Employees.Remove(employee);
+                await _context.SaveChangesAsync();
+        }
     }
 }

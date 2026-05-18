@@ -1,16 +1,11 @@
-﻿using Application.DTOs.EmployeeDTO.Request;
-using Application.DTOs.EmployeeDTO.Response;
-using Application.DTOs.TableDTO;
+﻿using Application.DTOs.TableDTO;
 using Application.Service;
 using Application.Service.Token;
 using Application.UseCase.EmployeeUseCase.EmployeeDTO.Request;
 using Application.UseCase.EmployeeUseCase.EmployeeDTO.Response;
 using Domain.Employee;
 using Domain.Employee.ValueObject;
-using Domain.Table;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace Application.UseCase.EmployeeUseCase
 {
@@ -21,12 +16,12 @@ namespace Application.UseCase.EmployeeUseCase
         private readonly TokenService _tokenService;
 
 
-        private Email CreateVO (string email)
+        private Email CreateVO(string email)
         {
             return Email.Create(email);
         }
 
-        private Guid ConverteStringToGuid (string id)
+        private Guid ConverteStringToGuid(string id)
         {
             if (!Guid.TryParse(id, out var guid))
                 throw new InvalidOperationException("Id inválido.");
@@ -34,13 +29,23 @@ namespace Application.UseCase.EmployeeUseCase
             return guid;
         }
 
-        public async Task<Result<Guid>> RegisterEmployee (RegisterEmployeeRequestDTO request)
+        private Employee EnsureEmployeeExists(Employee? employee)
+        {
+            if (employee is null)
+                throw new InvalidOperationException("Funcionário não econtrado.");
+
+            return employee;
+        }
+
+
+        //CADASTRO DE FUNCIONARIO
+        public async Task<Result<Guid>> RegisterEmployee(RegisterEmployeeRequestDTO request)
         {
             var emailVO = CreateVO(request.Email);
 
-            var emailExit = await _employeeRepository.EmailAlreadyRegistered(emailVO);
+            var emailExists = await _employeeRepository.EmailAlreadyRegistered(emailVO);
 
-            if (emailExit)
+            if (emailExists)
                 throw new InvalidOperationException("Email já cadastrado.");
 
             var passwordHash = _passwordService.GenerateHash(request.Password);
@@ -53,28 +58,19 @@ namespace Application.UseCase.EmployeeUseCase
 
         }
 
-        public async Task<Result<LoginResponseDTO>> Login (LoginEmployeeRequestDTO request)
+        //LOGIN DO FUNCIONARIO
+        public async Task<Result<LoginResponseDTO>> Login(LoginEmployeeRequestDTO request)
         {
 
             var emailVO = CreateVO(request.Email);
 
             var employee = await _employeeRepository.GetByEmailAsync(emailVO);
 
-            if (!Guid.TryParse(request.Id, out var idGuid))
-                throw new InvalidOperationException("Falha na conversão do ID");
 
-            var employee = await _employeeRepository.GetByIdAsync(idGuid);
-
-            if (employee is null)
-                throw new InvalidOperationException("Funcionário não encontrado.");
-
-            if (employee.Email != emailVO)
-                throw new InvalidOperationException("Email não confere");
-
+            EnsureEmployeeExists(employee);
 
             if (!_passwordService.VerifyPassword(request.Password, employee.PasswordHash))
-                throw new InvalidOperationException("Senha não confere.");
-
+                throw new InvalidOperationException("Login inválido.");
 
 
             var employeeToken = new TokenEmployee
@@ -87,28 +83,26 @@ namespace Application.UseCase.EmployeeUseCase
 
             var token = _tokenService.GenerateToken(employeeToken);
 
+            var loginResponseDTO = new LoginResponseDTO
+            (
+               employee.Id.ToString(),
+               employee.Name,
+               employee.RoleAccess.ToString(),
+               token
 
-
-            var loginResponseDTO =  new LoginResponseDTO
-            {
-                Id = employee.Id.ToString(),
-                Name = employee.Name,
-                Role = employee.RoleAccess.ToString(),
-                Token = token
-
-            };
+            );
 
             return Result<LoginResponseDTO>.Success(loginResponseDTO, "Login Realizado com sucesso.");
 
         }
 
+        //ATUALIZAR SENHA DE LOGIN DO FUNCIONARIO
         public async Task<Result<Guid>> UpdateEmployeePassword(UpdatePasswordEmployeeRequestDTO request)
         {
             var email = CreateVO(request.Email);
             var employee = await _employeeRepository.GetByEmailAsync(email);
 
-            if (employee is null)
-                throw new InvalidOperationException("Funcionário não encontrado.");
+            employee = EnsureEmployeeExists(employee);
 
             var newPassword = _passwordService.GenerateHash(request.Password);
             employee.UpdatePassword(newPassword);
@@ -119,27 +113,86 @@ namespace Application.UseCase.EmployeeUseCase
 
         }
 
+        //ATUALIZAR EMAIL DO FUNCIONARIO
+        public async Task<Result<Guid>> UpdateEmail (UpdateEmailEmployeeDTO request)
+        {
+            var id = ConverteStringToGuid(request.Id);
+            var employee = await _employeeRepository.GetByIdAsync(id);
 
-        public async Task<Result<Guid>> UpdateEmployeeChangeRole (UpdateRoleEmployeeDTO request)
+            employee = EnsureEmployeeExists(employee);
+
+            employee.UpdateEmail(request.Email);
+
+            await _employeeRepository.SaveChangesAsync();
+
+            return Result<Guid>.Success(id, "Email atualizado com sucesso.");
+
+        }
+
+        //ATUALIZAR ROLE DE ACESSO DO FUNCIONARIO
+        public async Task<Result<Guid>> UpdateEmployeeChangeRole(UpdateRoleEmployeeDTO request)
         {
             var id = ConverteStringToGuid(request.Id);
 
             var employee = await _employeeRepository.GetByIdAsync(id);
 
-            if (employee is null)
-                throw new InvalidOperationException("Funcionário não encontrado.");
+            employee = EnsureEmployeeExists(employee);
 
             employee.ChangeRoleAccess(request.Role);
             await _employeeRepository.SaveChangesAsync();
 
-            return Result<Guid>.Success(employee.Id, "Role de acesso atualizado com sucesso.");
+            return Result<Guid>.Success(id, "Role de acesso atualizado com sucesso.");
         }
 
-        public async Task<Result<Guid>> DeleteEmployee ()
+        //DELETAR FUNCIONARIO
+        public async Task<Result<Guid>> DeleteEmployee(DeleteEmployeeRequestDTO request)
         {
+            var id = ConverteStringToGuid(request.Id);
 
+            var employee = await _employeeRepository.GetByIdAsync(id);
+
+            employee = EnsureEmployeeExists(employee);
+
+            await _employeeRepository.DeleteAsync(employee);
+
+            return Result<Guid>.Success(id, "Funcionário deletado com sucesso.");
+        }
+
+
+        //LISTAR FUNCIONARIOS
+        public async Task<Result<List<ListEmployeeDTO>>> ListEmployee ()
+        {
+            var employers = await _employeeRepository.GetAllAsync() 
+                ?? throw new InvalidOperationException("Nenhum funcionário encontrado.");
+            
+            var listEmployeeDTO = employers.Select(x => new ListEmployeeDTO 
+            (
+               x.Id.ToString(),
+               x.Name,
+               x.RoleAccess.ToString()  
+            )).ToList();
+
+            return Result<List<ListEmployeeDTO>>.Success(listEmployeeDTO, "Funcionários listados com sucesso.");
+        }
+
+
+        public async Task<Result<GetByIdEmployeeDTO>> GetEmployeeById (SearchEmployeeIdDTO request)
+        {
+            var id = ConverteStringToGuid(request.Id);
+
+            var employee = await _employeeRepository.GetByIdAsync(id);
+
+            employee = EnsureEmployeeExists(employee);
+
+            var employeeDto = new GetByIdEmployeeDTO
+                (
+                    employee.Id.ToString(),
+                    employee.Name,
+                    employee.Email.ToString(),
+                    employee.RoleAccess.ToString()
+                );
+
+            return Result<GetByIdEmployeeDTO>.Success(employeeDto, "Funcionário buscado com sucesso");
         }
     }
 }
-
-
