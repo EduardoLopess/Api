@@ -68,6 +68,8 @@ namespace Domain.Product
                 return Result<Product>.Failure(resultName.Message);
 
             var resultCategory = EnsureValidCategory(category);
+            if (resultCategory.IsFailure)
+                return Result<Product>.Failure(resultCategory.Message);
 
             var product = new Product(
                 name,

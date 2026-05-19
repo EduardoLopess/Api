@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Common;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,13 +9,20 @@ namespace Domain.Product.ValueObject
     {
         public int Value { get; }
 
-        public QuantityStock(int value)
+        private QuantityStock(int value)
         {
 
-            if (value < 0) 
-                throw new ArgumentException("Estoque não pode ser negativo", nameof(value));
-
             Value = value;
+        }
+
+        public static Result<QuantityStock> Create (int value)
+        {
+            if (value < 0)
+                return Result<QuantityStock>.Failure("Quantidade de estoque inicial não pode ser menor que 0");
+
+            var quantityStock = new QuantityStock(value);
+
+            return Result<QuantityStock>.Success(quantityStock, "Estoque criado com sucesso.");
         }
 
         public QuantityStock AddStock (QuantityStock newValue)

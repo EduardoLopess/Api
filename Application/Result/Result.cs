@@ -2,17 +2,18 @@
 {
     public bool IsSuccess { get; }
     public string Message { get; }
-    public T? Data { get; }
+    public bool IsFailure => !IsSuccess;
+    public T? Value { get; }
 
-    private Result(bool success, string message, T? data)
+    private Result(bool success, string message, T? value)
     {
         IsSuccess = success;
         Message = message;
-        Data = data;
+        Value = value;
     }
 
-    public static Result<T> Success(T data, string message)
-        => new(true, message, data);
+    public static Result<T> Success(T value, string message)
+        => new(true, message, value);
 
     public static Result<T> Failure(string message)
         => new(false, message, default);

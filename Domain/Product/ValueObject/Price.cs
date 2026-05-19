@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Common;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,12 +9,19 @@ namespace Domain.Product.ValueObject
     {
         public decimal Value { get; }
 
-        public Price(decimal value)
+        private Price(decimal value)
+        {
+            Value = value;
+        }
+
+        public static Result<Price> Create(decimal value)
         {
             if (value <= 0)
-                throw new ArgumentException("Preço inválido.");
+                return Result<Price>.Failure("Preço do produto inválido.");
 
-            Value = value;
+            var price = new Price(value);
+            
+            return Result<Price>.Success(price, "Preço criado com sucesso.");
         }
     }
 }
