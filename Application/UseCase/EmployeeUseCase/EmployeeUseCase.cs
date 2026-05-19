@@ -9,22 +9,18 @@ using Domain.Employee.ValueObject;
 
 namespace Application.UseCase.EmployeeUseCase
 {
-    public class EmployeeUseCase
+    public class EmployeeUseCase(IEmployeeRepository employeeRepository, PasswordService passwordService, TokenService tokenService)
     {
-        private readonly IEmployeeRepository _employeeRepository;
-        private readonly PasswordService _passwordService;
-        private readonly TokenService _tokenService;
+        private readonly IEmployeeRepository _employeeRepository = employeeRepository;
+        private readonly PasswordService _passwordService = passwordService;
+        private readonly TokenService _tokenService = tokenService;
 
-
-        private Email CreateVO(string email)
-        {
-            return Email.Create(email);
-        }
+        private Email CreateVO(string email) => Email.Create(email);
 
         private Guid ConverteStringToGuid(string id)
         {
-            if (!Guid.TryParse(id, out var guid))
                 throw new InvalidOperationException("Id inválido.");
+            if (!Guid.TryParse(id, out var guid))
 
             return guid;
         }

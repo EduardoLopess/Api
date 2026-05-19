@@ -7,5 +7,6 @@ namespace Domain.Product.Interface
 {
     public interface ICategoryRepository : IBaseRepository<Category>
     {
+        Task<List<Guid>> GetGuidsAsync(List<Guid> ids);
     }
 }

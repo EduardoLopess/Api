@@ -1,4 +1,6 @@
-﻿using Domain.Product.Enum;
+﻿using Domain.Common;
+
+using Domain.Product.Enum;
 using Domain.Product.ValueObject;
 using System;
 using System.Collections;
@@ -25,13 +27,19 @@ namespace Domain.Product
         
         protected Product() { }
 
-        public Product(string name, QuantityStock stock , ProductCategory category, Price price, IEnumerable<Flavor>? flavors = null, IEnumerable<Additional>? additionals = null)
+        public Product(string name, Price price, QuantityStock stock, ProductCategory category, Availability availability, IEnumerable<Flavor>? flavors = null, IEnumerable<Additional>? additionals = null)
         {
 
             EnsureValidName(name);
-            EnsureValidStock(stock);
             EnsureValidCategory(category);
-            EnsureValidPrice(price);
+            
+
+            Id = Guid.NewGuid();
+            Name = name;
+            Price = price;
+            Stock = stock;
+            Availability = availability;
+            Category = category;
 
             if (flavors is not null)
             {
@@ -49,50 +57,69 @@ namespace Domain.Product
                 }
             }
 
-            Id = Guid.NewGuid();
-            Name = name;
-            Price = price;
-            Stock = stock;
-            Availability.Available();
-            Category = category;
-
         }
 
-    
-        private void AddAdditional(Additional additional)
+        public static Result<Product> CreteProductBase(string name, Price price, QuantityStock stock, ProductCategory category, Availability availability)
         {
-            if (additional is null) 
-                throw new ArgumentNullException(nameof(additional), "Adicional não informado");
 
-            if (_additional.Any(a => a.Id == additional.Id)) 
-                throw new InvalidOperationException("Adicional já cadastrado no produto.");
+            var resultName = EnsureValidName(name);
 
-            if (!additional.Availability.IsAvailable()) 
-                throw new InvalidOperationException("Adicional indisponível.");
+            if (resultName.IsFailure)
+                return Result<Product>.Failure(resultName.Message);
+
+            var resultCategory = EnsureValidCategory(category);
+
+            var product = new Product(
+                name,
+                price,
+                stock,
+                category,
+                availability
+            );
+
+            return Result<Product>.Success(product, "Producto criado.");
+        }
+
+        
+    
+        private Result AddAdditional(Additional additional)
+        {
+            if (additional is null)
+                return Result.Failure("Adicional não informado");
+
+
+            if (_additional.Any(a => a.Id == additional.Id))
+                return Result.Failure("Adicional já cadastrado no produto.");
+
+            if (!additional.Availability.IsAvailable())
+                return Result.Failure("Adicional indisponível.");
 
             _additional.Add(additional);
+
+            return Result.Success();
         }
 
-        private void AddFlavor(Flavor flavor)
+        private Result AddFlavor(Flavor flavor)
         {
-            if (flavor is null) 
-                throw new ArgumentNullException(nameof(flavor), "Sabo não informado");
+            if (flavor is null)
+                return Result.Failure("Sabor não informado.");
 
-            if (_flavor.Any(f => f.Id == flavor.Id)) 
-                throw new InvalidOperationException("Sabor já cadastrado no produto.");
+            if (_flavor.Any(f => f.Id == flavor.Id))
+                return Result.Failure("Sabor já cadastrado no produto.");
 
-            if (!flavor.Availability.IsAvailable()) 
-                throw new InvalidOperationException("Sabor indisponível");
+            if (!flavor.Availability.IsAvailable())
+                return Result.Failure("Sabor indiponivel");
 
             _flavor.Add(flavor);
+
+            return Result.Success();
         }
 
 
-
-        public void AddStock(QuantityStock quantityToAdd)
+        public Result AddStock(QuantityStock quantityToAdd)
         {
             if (quantityToAdd is null)
-                throw new ArgumentNullException(nameof(quantityToAdd), "Valor estoque não informado.");
+                return Result.Failure("Valor estoque não informado.");
 
             Stock = Stock.AddStock(quantityToAdd);
 
@@ -100,12 +127,14 @@ namespace Domain.Product
             {
                 Available();
             }
+
+            return Result.Success();
         }
 
-        public void DebitStock(QuantityStock quantityToDebit)
+        public Result DebitStock(QuantityStock quantityToDebit)
         {
-            if (quantityToDebit is null) 
-                throw new ArgumentNullException(nameof(quantityToDebit), "Valor a ser decrementado não informado.");
+            if (quantityToDebit is null)
+                return Result.Failure("Valor a ser decrementado não informado.");
 
             Stock = Stock.DebitStock(quantityToDebit);
 
@@ -114,54 +143,56 @@ namespace Domain.Product
                 Unavailable();
             }
 
+            return Result.Success();
+
         }
 
-        private void Unavailable ()
+        private Result Unavailable ()
         {
-            if (!Availability.IsAvailable()) 
-                throw new InvalidOperationException("Produto já indisponível");
+            if (!Availability.IsAvailable())
+                return Result.Failure("Produto já indisponível");
 
             Availability.Unavailable();
+
+            return Result.Success();
         }
 
-        private void Available()
+        private Result Available()
         {
-            if (Availability.IsAvailable()) 
-                throw new InvalidOperationException("Produto já disponível.");
+            if (Availability.IsAvailable())
+                return Result.Failure("Produto já disponível.");
 
-           Availability.Available();
+            Availability.Available();
+            
+            return Result.Success();
         }
 
 
-        private void EnsureValidName(string name)
+        private static Result EnsureValidName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Nome é obrigatório.", nameof(name));
+                return Result.Failure("Nome é obrigatório.");
+        
+            return Result.Success();
         }
 
-        private void EnsureValidStock(QuantityStock stock)
-        {
-            if (stock is null)
-                throw new ArgumentNullException(nameof(stock), "Valor de estoque deve ser informado.");
-        }
 
-        private void EnsureValidCategory(ProductCategory category)
+
+        private static Result EnsureValidCategory(ProductCategory category)
         {
             if (category is null)
-                throw new ArgumentNullException(nameof(category), "Categoria não informada.");
+                return Result.Failure("Categoria não informada.");
 
             if (category.TypeId == Guid.Empty)
-                throw new ArgumentNullException("Tipo do produto não informado.");
+                return Result.Failure("Tipo do produto não informado.");
 
-            if (category.SubTypeId == Guid.Empty) 
-                throw new ArgumentNullException("Subtipo do produto não informado.");
+            if (category.SubTypeId == Guid.Empty)
+                return Result.Failure("Subtipo do produto não informado.");
+
+            return Result.Success();
         }
 
-        private void EnsureValidPrice(Price price)
-        {
-            if (price is null)
-                throw new ArgumentNullException(nameof(price), "Preço não informado.");
-        }
+      
 
     }
 }
