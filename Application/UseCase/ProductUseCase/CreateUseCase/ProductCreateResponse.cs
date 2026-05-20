@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.UseCase.ProductUseCase.CreateUseCase.Response
+namespace Application.UseCase.ProductUseCase.CreateUseCase
 {
-    public record ProductCreateResponseDTO
+    public record ProductCreateResponse
     (
         string Id,
         string Name

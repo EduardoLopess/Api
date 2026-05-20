@@ -1,10 +1,9 @@
-﻿using Application.UseCase.ProductUseCase.CreateUseCase.Request;
-using FluentValidation;
+﻿using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.UseCase.ProductUseCase.CreateUseCase.Validation
+namespace Application.UseCase.ProductUseCase.CreateUseCase
 {
     public class RegisterProductBaseValidation : AbstractValidator<RegisterProductBaseRequestDTO>
     {
