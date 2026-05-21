@@ -7,5 +7,6 @@ namespace Domain.Product.Interface
 {
     public interface IProductRepository : IBaseRepository<Product>
     {
+        Task<bool> NameIsAlreadyRegistered(string name);
     }
 }

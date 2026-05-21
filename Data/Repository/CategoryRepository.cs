@@ -26,14 +26,11 @@ namespace Data.Repository
             throw new NotImplementedException();
         }
 
-        public async Task<List<Guid>> GetGuidsAsync(List<Guid> ids)
+        public async Task<List<Category>> GetGuidsAsync(List<Guid> ids)
         {
-            var guids = await _context.Categories
-                 .Where(x => ids.Contains(x.Id))
-                 .Select(x => x.Id)
-                 .ToListAsync();
-
-            return guids;
+            return await _context.Categories
+                .Where(x => ids.Contains(x.Id))
+                .ToListAsync();
         }
 
         public Task SaveChangesAsync()

@@ -2,6 +2,7 @@
 using Domain.Product;
 using Domain.Product.Interface;
 using Domain.Product.ValueObject;
+using System.Data;
 
 
 namespace Application.UseCase.ProductUseCase.CreateUseCase
@@ -22,7 +23,28 @@ namespace Application.UseCase.ProductUseCase.CreateUseCase
             if (quantityResult.IsFailure)
                 return Result<ProductCreateResponse>.Failure(quantityResult.Message);
 
-            var productCategoryResult = ProductCategory.Create(request.CategoryId, request.TypeId, request.SubTypeId);
+            var existeName = await _productRepository.NameIsAlreadyRegistered(request.Name);
+            if (existeName)
+                return Result<ProductCreateResponse>.Failure("Nome de produto já existe no sistema.");
+
+
+            var idsSearch = new List<Guid> { request.CategoryId, request.TypeId, request.SubTypeId };
+
+            var validCategory = await _categoryRepository.GetGuidsAsync(idsSearch);
+
+            if (validCategory.Count < 3)
+                return Result<ProductCreateResponse>.Failure("Uma ou mais categorias não existe.");
+
+            var category = validCategory.First(x => x.Id == request.CategoryId);
+            var type = validCategory.First(x => x.Id == request.TypeId);
+            var subType = validCategory.First(x => x.Id == request.SubTypeId);
+
+            if (type.ParentId != category.Id || subType.ParentId != type.Id)
+                return Result<ProductCreateResponse>.Failure("A hierarquia das categorias é inválida.");
+
+            var productCategoryResult = ProductCategory.Create
+                (request.CategoryId, category.Name, request.TypeId, type.Name, request.SubTypeId, subType.Name);
+
             if (productCategoryResult.IsFailure)
                 return Result<ProductCreateResponse>.Failure(productCategoryResult.Message);
 
@@ -35,13 +57,6 @@ namespace Application.UseCase.ProductUseCase.CreateUseCase
 
             if (productResult.IsFailure)
                 return Result<ProductCreateResponse>.Failure(productResult.Message);
-
-            var idsSearch = new List<Guid> { request.CategoryId, request.TypeId, request.SubTypeId };
-
-            var validCategory = await _categoryRepository.GetGuidsAsync(idsSearch);
-
-            if (validCategory.Count < 3)
-                return Result<ProductCreateResponse>.Failure("Uma ou mais categorias não existe.");
 
             Product product = productResult.Value!;
 
