@@ -1,3 +1,4 @@
+using Application.Service.password;
 using Application.Validation;
 using Data.Context;
 using Data.Repository;
@@ -44,6 +45,8 @@ builder.Services.AddScoped<IFlavorRepository, FlavorRepository>();
 builder.Services.AddScoped<IAdditionalRepository, AdditionalRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterEmployeeValidator>();
 

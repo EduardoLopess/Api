@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.TableDTO;
-using Application.Service;
+using Application.Service.password;
 using Application.Service.Token;
 using Application.UseCase.EmployeeUseCase.EmployeeDTO.Request;
 using Application.UseCase.EmployeeUseCase.EmployeeDTO.Response;
@@ -9,31 +9,13 @@ using Domain.Employee.ValueObject;
 
 namespace Application.UseCase.EmployeeUseCase
 {
-    public class EmployeeUseCase(IEmployeeRepository employeeRepository, PasswordService passwordService, TokenService tokenService)
+    public class RegisterUseCase(IEmployeeRepository employeeRepository, PasswordService passwordService, TokenService tokenService)
     {
         private readonly IEmployeeRepository _employeeRepository = employeeRepository;
         private readonly PasswordService _passwordService = passwordService;
         private readonly TokenService _tokenService = tokenService;
 
-        private Email CreateVO(string email) => Email.Create(email);
-
-        private Guid ConverteStringToGuid(string id)
-        {
-                throw new InvalidOperationException("Id inválido.");
-            if (!Guid.TryParse(id, out var guid))
-
-            return guid;
-        }
-
-        private Employee EnsureEmployeeExists(Employee? employee)
-        {
-            if (employee is null)
-                throw new InvalidOperationException("Funcionário não econtrado.");
-
-            return employee;
-        }
-
-
+   =
         //CADASTRO DE FUNCIONARIO
         public async Task<Result<Guid>> RegisterEmployee(RegisterEmployeeRequestDTO request)
         {

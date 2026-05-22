@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using Domain.Common;
+using System.Text.RegularExpressions;
 
 namespace Domain.Employee.ValueObject
 {
@@ -13,19 +14,20 @@ namespace Domain.Employee.ValueObject
 
         private Email(string value) => Value = value;
 
-        public static Email Create(string email)
+        public static Result<Email> Create(string value)
         {
-            if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("Email não informado.");
+            if (string.IsNullOrWhiteSpace(value))
+                return Result<Email>.Failure("Email não informado");
 
-           
-            email = email.Trim();
+            value = value.Trim();
 
-            if (!EmailRegex.IsMatch(email))
-                throw new ArgumentException("Email com formato inválido.");
+            if (!EmailRegex.IsMatch(value))
+                return Result<Email>.Failure("Email com formato inválido.");
 
-          
-            return new Email(email);
+
+            var email = new Email(value);
+
+            return Result<Email>.Success(email, "Email criado com sucesso.");
         }
 
        

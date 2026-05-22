@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Application.Service
+namespace Application.Service.password
 {
-    public class PasswordService
+    public class PasswordService : IPasswordService
     {
-        public string GenerateHash (string password)
+    
+        public string GenerateHash(string password)
         {
             return BCrypt.Net.BCrypt.HashPassword(password);
         }

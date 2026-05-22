@@ -1,4 +1,5 @@
-﻿using Domain.Employee.Enum;
+﻿using Domain.Common;
+using Domain.Employee.Enum;
 using Domain.Employee.ValueObject;
 using System;
 using System.Collections.Generic;
@@ -17,18 +18,29 @@ namespace Domain.Employee
 
         protected Employee() {}
 
-        public Employee ( string name, Email email, string passwordHash, RoleAccess roleAccess)
+        private Employee ( string name, Email email, string passwordHash, RoleAccess roleAccess)
         {
-            EnsureValidName(name);
-            EnsureValidPasswordHash(passwordHash);
-            EnsureValidRoleAcess(roleAccess);
-
+         
             Id = Guid.NewGuid();
             Name = name;
             Email = email;
             PasswordHash = passwordHash;
             RoleAccess = roleAccess;
         }
+
+        public static Result<Employee> Create(string name, Email email, string passwordHash, RoleAccess roleAccess)
+        {
+            EnsureValidName(name);
+            EnsureValidPasswordHash(passwordHash);
+            EnsureValidRoleAcess(roleAccess);
+
+            var employee = new Employee(name, email, passwordHash, roleAccess);
+
+            return Result<Employee>.Success(employee, "Funcionário criado.");
+
+        }
+
+
 
         public void UpdatePassword (string newPasswordHash)
         {
@@ -54,7 +66,22 @@ namespace Domain.Employee
 
         }
 
-        private void EnsureValidName (string name)
+        public static Result<bool> CheckPasswordIsValid (string password, string cofirmPassword)
+        {
+            if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(cofirmPassword))
+                return Result<bool>.Failure("Senha não informada");
+
+            if (password.Length < 8)
+                return Result<bool>.Failure("Senha deve conter pelo menos 8 caracteres");
+
+            if (password != cofirmPassword)
+                return Result<bool>.Failure("Senhas não são iguais.");
+
+            return Result<bool>.Success(true, "Senha validada com sucesso.");
+
+        }
+
+        private static void EnsureValidName (string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Nome não informado.");
@@ -63,13 +90,13 @@ namespace Domain.Employee
                 throw new ArgumentException("Nome deve conter apenas letras.");
         }
 
-        private void EnsureValidPasswordHash (string passwordHash)
+        private static void EnsureValidPasswordHash (string passwordHash)
         {
             if (string.IsNullOrWhiteSpace(passwordHash))
                 throw new ArgumentException("Hash da senha não informado.");
         }
 
-        private void EnsureValidRoleAcess (RoleAccess roleAccess)
+        private static void EnsureValidRoleAcess (RoleAccess roleAccess)
         {
             if (roleAccess == RoleAccess.None)
                 throw new ArgumentException("Permissão inválida.");
