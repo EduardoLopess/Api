@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Application.Service.Token
 {
-    public class TokenService
+    public class TokenService : ITokenEmployee
     {
         private readonly IConfiguration _configuration;
 
