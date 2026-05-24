@@ -60,9 +60,9 @@ namespace Domain.Employee
             RoleAccess = roleAccess;
         }
 
-        public void UpdateEmail (string email)
+        public void UpdateEmail (Email email)
         {
-            Email = Email.Create(email);
+            Email = email;
 
         }
 
